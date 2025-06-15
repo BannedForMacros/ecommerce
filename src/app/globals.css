@@ -1,26 +1,202 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/* Configuración de tema personalizado para v4 */
+@theme {
+  --color-primary-red: #E31E24;
+  --color-primary-green: #4CAF50;
+  --color-primary-green-light: #66BB6A;
+  --color-primary-green-dark: #388E3C;
+  
+  --color-secondary-blue: #87CEEB;
+  --color-secondary-blue-light: #B3E5FC;
+  --color-secondary-gray: #F5F5F5;
+  --color-secondary-gray-light: #FAFAFA;
+  --color-secondary-gray-dark: #424242;
+  
+  --color-accent-yellow: #FFC107;
+  --color-accent-orange: #FF9800;
+  
+  --font-family-sans: Inter, system-ui, sans-serif;
+  
+  --shadow-product: 0 2px 8px rgb(0 0 0 / 0.1);
+  --shadow-product-hover: 0 4px 16px rgb(0 0 0 / 0.15);
+  
+  --border-radius-xl: 1rem;
+  --border-radius-2xl: 1.5rem;
+  
+  --spacing-18: 4.5rem;
+  --spacing-88: 22rem;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* Estilos base */
+html {
+  scroll-behavior: smooth;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-family-sans);
+  background-color: #fff;
+}
+
+/* Componentes personalizados */
+.btn-primary {
+  background-color: var(--color-primary-red);
+  color: white;
+  font-weight: 500;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  transition: background-color 0.2s;
+}
+
+.btn-primary:hover {
+  background-color: #dc2626;
+}
+
+.btn-secondary {
+  background-color: var(--color-primary-green);
+  color: white;
+  font-weight: 500;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  transition: background-color 0.2s;
+}
+
+.btn-secondary:hover {
+  background-color: #16a34a;
+}
+
+.product-card {
+  background-color: white;
+  border-radius: var(--border-radius-xl);
+  box-shadow: var(--shadow-product);
+  transition: all 0.3s;
+  padding: 1rem;
+  border: 1px solid #f3f4f6;
+}
+
+.product-card:hover {
+  box-shadow: var(--shadow-product-hover);
+}
+
+.price-discount {
+  color: var(--color-primary-red);
+  font-weight: bold;
+  font-size: 1.125rem;
+}
+
+.price-original {
+  color: #6b7280;
+  text-decoration: line-through;
+  font-size: 0.875rem;
+}
+
+.search-input {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 2px solid #e5e7eb;
+  border-radius: 0.5rem;
+  transition: all 0.2s;
+}
+
+.search-input:focus {
+  border-color: var(--color-primary-green);
+  outline: none;
+  box-shadow: 0 0 0 3px rgb(76 175 80 / 0.1);
+}
+
+.discount-badge {
+  position: absolute;
+  top: 0.5rem;
+  left: 0.5rem;
+  background-color: var(--color-primary-red);
+  color: white;
+  padding: 0.25rem 0.5rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: bold;
+}
+
+.nav-link {
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.25rem;
+  transition: background-color 0.2s;
+}
+
+.nav-link:hover {
+  background-color: rgb(34 197 94 / 0.8);
+}
+
+.hero-title {
+  font-size: clamp(2.5rem, 5vw, 4rem);
+  font-weight: bold;
+  color: white;
+  text-shadow: 0 2px 4px rgb(0 0 0 / 0.3);
+}
+
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+}
+
+@media (min-width: 768px) {
+  .product-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .product-grid {
+    grid-template-columns: repeat(6, 1fr);
+  }
+}
+
+.section-title {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #1f2937;
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.text-shadow {
+  text-shadow: 0 2px 4px rgb(0 0 0 / 0.1);
+}
+
+.bg-gradient-primary {
+  background: linear-gradient(135deg, var(--color-primary-red) 0%, #dc2626 100%);
+}
+
+.bg-gradient-secondary {
+  background: linear-gradient(135deg, var(--color-primary-green) 0%, var(--color-primary-green-dark) 100%);
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+.animate-slide-up {
+  animation: slideUp 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+  0% { 
+    opacity: 0; 
+  }
+  100% { 
+    opacity: 1; 
+  }
+}
+
+@keyframes slideUp {
+  0% { 
+    transform: translateY(10px); 
+    opacity: 0; 
+  }
+  100% { 
+    transform: translateY(0); 
+    opacity: 1; 
+  }
 }
