@@ -1,10 +1,9 @@
-// src/components/sections/CategoriesWave.tsx
-import { ReactNode } from 'react';
+'use client'
 
 export interface Category {
   id: string;
   name: string;
-  icon: ReactNode;
+  image: string;
 }
 
 export default function CategoriesWave({ categories }: { categories: Category[] }) {
@@ -32,7 +31,6 @@ export default function CategoriesWave({ categories }: { categories: Category[] 
               key={cat.id}
               className="min-w-[110px] h-24 bg-white/90 text-primary-green rounded-xl flex flex-col items-center justify-center gap-1 px-3 shadow-product-hover"
             >
-              {cat.icon}
               <span className="text-sm font-medium text-primary-red text-center">
                 {cat.name}
               </span>

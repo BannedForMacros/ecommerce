@@ -11,7 +11,6 @@ export default function Home() {
       <HeroBanner />
 
       <ProductSection
-      greenPercent={55}
         rows={[
           { title: 'Promociones',      products: promos, link: '/promos' },
           { title: 'Los más vendidos', products: best,   link: '/best'   },

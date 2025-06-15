@@ -11,6 +11,5 @@ export interface Product {
 export interface Category {
   id: string;
   name: string;
-  /** Una ruta de imagen (string) **o** un componente de icono React */
-  iconKey: 'package' | 'soup' | 'cupsoda' | 'basket';
+  image: string;
 }

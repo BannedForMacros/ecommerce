@@ -29,8 +29,9 @@ export const newProducts: Product[] = [
 ];
 
 export const categories: Category[] = [
-  { id: 'c1', name: 'Abarrotes', iconKey: 'package' },
-  { id: 'c2', name: 'Conservas', iconKey: 'soup' },
-  { id: 'c3', name: 'Bebidas', iconKey: 'cupsoda' },
-  { id: 'c4', name: 'Canastas', iconKey: 'basket' },
+  { id: 'c1', name: 'Lleva un estilo de vida saludable', image: 'saludable.jpg' },
+  { id: 'c2', name: 'Lo que necesitas para tu bar',       image: 'bar.jpg' },
+  { id: 'c3', name: 'Todos los abarrotes para tu cocina', image: 'abarrotes.jpg' },
+  { id: 'c4', name: 'Complementos para tu parrilla',      image: 'parrilla.jpg' },
+  { id: 'c5', name: 'Dulces & Chocolates',                image: 'dulces.jpg' },
 ];
