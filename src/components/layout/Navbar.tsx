@@ -15,7 +15,7 @@ export default function Navbar() {
             <Image
               src="/images/logo.png"          /* ⇠ logo en public/images/ */
               alt="Galvan"
-              width={200}
+              width={170}
               height={200}
               priority
             />
@@ -49,7 +49,6 @@ export default function Navbar() {
             ❤️ FAVORITOS
           </button>
 
-          {/* Buscador */}
           <div className="flex-1 max-w-md">
             <div className="relative">
               <input
@@ -57,14 +56,15 @@ export default function Navbar() {
                 placeholder="¿Qué producto estás buscando?"
                 className="
                   w-full pr-9 pl-3 py-1.5 rounded
-                  border border-white             /* borde blanco */
-                  text-black placeholder-gray-500 /* texto más negro */
+                  border border-white
+                  bg-transparent
+                  text-white placeholder-white/90   /* ✔ se ve mejor */
                   text-sm focus:outline-none focus:ring-2 focus:ring-white
                 "
               />
               <button
                 className="absolute right-1 top-1/2 -translate-y-1/2
-                           bg-green-600 hover:bg-green-700 p-1 rounded"
+                          bg-white/10 hover:bg-white/20 p-1 rounded transition-colors"
               >
                 <Search className="w-4 h-4 text-white" />
               </button>

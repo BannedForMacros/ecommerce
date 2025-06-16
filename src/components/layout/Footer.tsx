@@ -1,78 +1,125 @@
 // src/components/layout/Footer.tsx
+/* eslint-disable @next/next/no-img-element */
+'use client'
+
 import Image from 'next/image'
 import Link  from 'next/link'
 import { Facebook, Instagram } from 'lucide-react'
 
-export default function Footer() {
+export default function Footer () {
   return (
-    <footer className="bg-secondary-gray-light text-secondary-gray-dark pt-10">
-      {/* ──────────────────── columnas ──────────────────── */}
-      <div className="max-w-6xl mx-auto px-4 grid grid-cols-1 sm:grid-cols-3 gap-12 text-sm">
-        {/* 1. Categorías */}
-        <div>
-          <h4 className="font-semibold text-base mb-3">Categorías</h4>
-          <ul className="space-y-1">
-            <li><Link href="#">Abarrotes</Link></li>
-            <li><Link href="#">Bebidas</Link></li>
-            <li><Link href="#">Saludable</Link></li>
-            <li><Link href="#">Dulces</Link></li>
-            <li><Link href="#">Postres</Link></li>
-            <li><Link href="#">Frutas y Verduras</Link></li>
-            <li><Link href="#">Licores</Link></li>
-          </ul>
-        </div>
+    /* ——— Fondo neutro (#F9FAFB ≈ gray-50) ——— */
+    <footer className="bg-[#F9FAFB] text-gray-700 text-sm tracking-wide">
 
-        {/* 2. Información */}
-        <div>
-          <h4 className="font-semibold text-base mb-3">Información</h4>
-          <ul className="space-y-1">
-            <li><Link href="#">Nuestras tiendas</Link></li>
-            <li><Link href="#">Nuestra historia</Link></li>
-            <li><Link href="#">Dirección</Link></li>
-            <li><Link href="#">Teléfonos</Link></li>
-            <li><Link href="#">Términos y Condiciones</Link></li>
-            <li><Link href="#">Políticas y cookies</Link></li>
-          </ul>
-        </div>
+      {/* ══════════ columnas ══════════ */}
+      <section className="max-w-6xl mx-auto px-6 pt-14 pb-10
+                          grid gap-14 sm:grid-cols-2 lg:grid-cols-3">
 
-        {/* 3. Conócenos */}
-        <div>
-          <h4 className="font-semibold text-base mb-3">Conócenos</h4>
+        {/* Categorías */}
+        <Column title="Categorías">
+          {[
+            'Abarrotes','Bebidas','Saludable','Dulces',
+            'Postres','Frutas y Verduras','Licores',
+          ].map(t => <Bullet key={t} label={t}/>)}
+        </Column>
+
+        {/* Información */}
+        <Column title="Información">
+          {[
+            'Nuestras tiendas','Nuestra historia','Dirección',
+            'Teléfonos','Términos y Condiciones','Políticas y cookies',
+          ].map(t => <Bullet key={t} label={t}/>)}
+        </Column>
+
+        {/* Conócenos */}
+        <Column title="Conócenos" noList>
           <p className="mb-3">Encuentra nuestra app en</p>
 
-          {/* Badges: coloca los SVG/PNG en /public/badges */}
-          <div className="flex gap-2 mb-6">
+          <div className="flex gap-3 mb-8">
             <Image
               src="/badges/google-play.svg"
               alt="Google Play"
-              width={110}
-              height={34}
-              priority
+              width={120} height={36} priority
+              className="transition-transform hover:scale-105"
             />
             <Image
               src="/badges/app-store.svg"
               alt="App Store"
-              width={110}
-              height={34}
+              width={120} height={36}
+              className="transition-transform hover:scale-105"
             />
           </div>
 
-          <p className="mb-2">Síguenos en</p>
-          <div className="flex gap-3">
-            <Link href="#" aria-label="Facebook">
-              <Facebook size={20} />
-            </Link>
-            <Link href="#" aria-label="Instagram">
-              <Instagram size={20} />
-            </Link>
+          <p className="mb-3">Síguenos en</p>
+          <div className="flex gap-4">
+            <Social href="#" aria="Facebook"><Facebook size={20}/></Social>
+            <Social href="#" aria="Instagram"><Instagram size={20}/></Social>
           </div>
-        </div>
-      </div>
+        </Column>
+      </section>
 
-      {/* ───── línea gris + crédito ───── */}
-      <div className="border-t border-gray-300 mt-10">
-        <p className="text-center py-4 font-semibold">2025 Data Business</p>
+      {/* línea + copyright */}
+      <div className="border-t border-gray-300/70 bg-white/60 backdrop-blur">
+        <p className="text-center py-5 font-medium text-xs sm:text-sm">
+          © 2025 Data Business · Todos los derechos reservados
+        </p>
       </div>
     </footer>
+  )
+}
+
+/* ——— helpers ——— */
+
+function Column ({
+  title,
+  children,
+  noList = false,
+}: { title:string; children:React.ReactNode; noList?:boolean }) {
+  return (
+    <div>
+      <h4 className="font-semibold text-base mb-4
+                     after:block after:w-10 after:h-0.5 after:bg-gray-400/60 after:mt-1">
+        {title}
+      </h4>
+      {noList ? children : <ul className="space-y-2">{children}</ul>}
+    </div>
+  )
+}
+
+/* punto que aparece al hacer hover */
+function Bullet ({ label }:{ label:string }) {
+  return (
+    <li>
+      <Link
+        href="#"
+        className="group flex items-center gap-2 text-gray-600
+                   hover:text-gray-900 transition-colors"
+      >
+        <span
+          className="w-1.5 h-1.5 rounded-full bg-current
+                     transform opacity-0 -translate-x-1
+                     group-hover:opacity-100 group-hover:translate-x-0
+                     transition-all duration-200"
+        />
+        {label}
+      </Link>
+    </li>
+  )
+}
+
+/* icono con pequeñísimo efecto “wiggle” */
+function Social ({
+  href, aria, children,
+}: { href:string; aria:string; children:React.ReactNode }) {
+  return (
+    <Link
+      href={href}
+      aria-label={aria}
+      className="grid place-items-center w-11 h-11 rounded-xl border border-gray-300
+                 hover:bg-white hover:shadow-md hover:rotate-3
+                 transition-transform duration-300"
+    >
+      {children}
+    </Link>
   )
 }
