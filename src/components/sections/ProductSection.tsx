@@ -42,7 +42,6 @@ export default function ProductSection({ rows }: Props) {
   const [visibleRows, setVisibleRows] = useState<Set<number>>(new Set());
   const [modalProduct, setModalProduct] = useState<Product | null>(null);
 
-  // Fade-in de filas al entrar en viewport
   useEffect(() => {
     const obs = new IntersectionObserver(
       entries => {
@@ -55,9 +54,7 @@ export default function ProductSection({ rows }: Props) {
       },
       { threshold: 0.1, rootMargin: '20px' }
     );
-    document
-      .querySelectorAll<HTMLElement>('[data-row-index]')
-      .forEach(el => obs.observe(el));
+    document.querySelectorAll<HTMLElement>('[data-row-index]').forEach(el => obs.observe(el));
     return () => obs.disconnect();
   }, []);
 
@@ -92,10 +89,10 @@ export default function ProductSection({ rows }: Props) {
           as="div"
           className="fixed inset-0 z-50 overflow-y-auto"
           open={!!modalProduct}
-          onClose={() => setModalProduct(null)} // cierra con Esc o clic fuera
+          onClose={() => setModalProduct(null)}
         >
           <div className="flex min-h-screen items-center justify-center px-4 text-center">
-            {/* Overlay semitransparente, solo visual */}
+            {/* Overlay semitransparente */}
             <Transition.Child
               as="div"
               enter="ease-out duration-300"
@@ -108,7 +105,7 @@ export default function ProductSection({ rows }: Props) {
               <div className="fixed inset-0 bg-black/40 pointer-events-none" />
             </Transition.Child>
 
-            {/* Hack vertical */}
+            {/* Centrado vertical */}
             <span className="inline-block h-screen align-middle" aria-hidden="true">
               &#8203;
             </span>
@@ -127,7 +124,7 @@ export default function ProductSection({ rows }: Props) {
                 <Dialog.Panel className="relative z-50 inline-block w-full max-w-3xl p-4 md:p-6 my-8 overflow-hidden text-left align-middle transition-all transform bg-white shadow-xl rounded-2xl">
                   {/* Botón de cerrar */}
                   <button
-                    className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
+                    className="absolute top-4 right-4 z-20 text-gray-500 hover:text-gray-700"
                     onClick={() => setModalProduct(null)}
                   >
                     <X size={24} />
@@ -141,7 +138,7 @@ export default function ProductSection({ rows }: Props) {
                       glareColor="#ffffff"
                       tiltMaxAngleX={20}
                       tiltMaxAngleY={20}
-                      className="w-full md:w-1/2 h-64 md:h-auto rounded-lg overflow-hidden bg-gray-100"
+                      className="z-0 w-full md:w-1/2 h-64 md:h-auto rounded-lg overflow-hidden bg-gray-100"
                     >
                       <img
                         src={`/products/${modalProduct.image}.jpg`}
