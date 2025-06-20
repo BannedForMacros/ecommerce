@@ -13,10 +13,8 @@ import {
   Star,
   X
 } from 'lucide-react';
- import { useFavorites } from '@/context/FavoritesContext';
+import { useFavorites } from '@/context/FavoritesContext';   /* 🆕 */
 
-
-/* ────────────────── Tipos ────────────────── */
 export interface Product {
   id: string | number;
   name: string;
@@ -28,21 +26,21 @@ export interface Product {
   badge?: string;
   discount?: number;
 }
-
 export interface Row {
   title: string;
   products: Product[];
   link?: string;
 }
-
 interface Props {
   rows: Row[];
 }
 
-/* ────────────────── ProductSection ────────────────── */
 export default function ProductSection({ rows }: Props) {
   const [visibleRows, setVisibleRows] = useState<Set<number>>(new Set());
   const [modalProduct, setModalProduct] = useState<Product | null>(null);
+
+  /* 🆕 traemos favorito para usar en el modal */
+  const { favorites, toggleFavorite } = useFavorites();
 
   useEffect(() => {
     const obs = new IntersectionObserver(
@@ -56,23 +54,24 @@ export default function ProductSection({ rows }: Props) {
       },
       { threshold: 0.1, rootMargin: '20px' }
     );
-    document.querySelectorAll<HTMLElement>('[data-row-index]').forEach(el => obs.observe(el));
+    document
+      .querySelectorAll<HTMLElement>('[data-row-index]')
+      .forEach(el => obs.observe(el));
     return () => obs.disconnect();
   }, []);
 
   return (
     <>
-      {/* ───────── Sección de filas con fondo de onda ───────── */}
+      {/* ………………………………………………………  sección de filas (sin cambios) ……………………………………………………… */}
       <section className="py-12 relative overflow-hidden">
-        {/* Fondo con onda suave */}
+        {/* fondo de onda */}
         <div className="absolute inset-0 bg-gradient-to-b from-gray-50 to-white">
-          {/* Parte verde con ondas suaves usando SVG */}
           <div className="absolute top-0 left-0 w-full h-full">
+            {/* svg */}
             <svg
               className="absolute top-0 left-0 w-full h-full"
               viewBox="0 0 1200 600"
               preserveAspectRatio="none"
-              xmlns="http://www.w3.org/2000/svg"
             >
               <defs>
                 <linearGradient id="greenGradient" x1="0%" y1="0%" x2="0%" y2="100%">
@@ -81,15 +80,9 @@ export default function ProductSection({ rows }: Props) {
                 </linearGradient>
               </defs>
               <path
-                d="M0,0 L1200,0 L1200,280 
-                   C1150,290 1100,300 1050,295 
-                   C1000,290 950,275 900,285 
-                   C850,295 800,310 750,305 
-                   C700,300 650,285 600,290 
-                   C550,295 500,305 450,300 
-                   C400,295 350,285 300,290 
-                   C250,295 200,305 150,300 
-                   C100,295 50,285 25,280 
+                d="M0,0 L1200,0 L1200,280 C1150,290 1100,300 1050,295 C1000,290 950,275 900,285
+                   C850,295 800,310 750,305 C700,300 650,285 600,290 C550,295 500,305 450,300
+                   C400,295 350,285 300,290 C250,295 200,305 150,300 C100,295 50,285 25,280
                    L0,275 Z"
                 fill="url(#greenGradient)"
               />
@@ -97,14 +90,15 @@ export default function ProductSection({ rows }: Props) {
           </div>
         </div>
 
-        {/* Contenido */}
         <div className="relative z-10 max-w-7xl mx-auto px-4 space-y-16">
           {rows.map((row, idx) => (
             <div
               key={idx}
               data-row-index={idx}
               className={`transition-all duration-700 ease-out ${
-                visibleRows.has(idx) ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+                visibleRows.has(idx)
+                  ? 'opacity-100 translate-y-0'
+                  : 'opacity-0 translate-y-8'
               }`}
               style={{ transitionDelay: `${idx * 100}ms` }}
             >
@@ -119,7 +113,7 @@ export default function ProductSection({ rows }: Props) {
         </div>
       </section>
 
-      {/* ───────── Modal ───────── */}
+      {/* ———————————————— Modal ———————————————— */}
       <Transition.Root show={!!modalProduct} as={Fragment}>
         <Dialog
           as="div"
@@ -128,7 +122,6 @@ export default function ProductSection({ rows }: Props) {
           onClose={() => setModalProduct(null)}
         >
           <div className="flex min-h-screen items-center justify-center px-4 text-center">
-            {/* Overlay semitransparente */}
             <Transition.Child
               as="div"
               enter="ease-out duration-300"
@@ -141,12 +134,10 @@ export default function ProductSection({ rows }: Props) {
               <div className="fixed inset-0 bg-black/40 pointer-events-none" />
             </Transition.Child>
 
-            {/* Centrado vertical */}
             <span className="inline-block h-screen align-middle" aria-hidden="true">
               &#8203;
             </span>
 
-            {/* Panel */}
             <Transition.Child
               as="div"
               enter="ease-out duration-300"
@@ -157,8 +148,7 @@ export default function ProductSection({ rows }: Props) {
               leaveTo="opacity-0 scale-95"
             >
               {modalProduct && (
-                <Dialog.Panel className="relative z-50 inline-block w-full max-w-3xl p-4 md:p-6 my-8 overflow-hidden text-left align-middle transition-all transform bg-white shadow-xl rounded-2xl">
-                  {/* Botón de cerrar */}
+                <Dialog.Panel className="relative inline-block w-full max-w-3xl p-4 md:p-6 my-8 overflow-hidden text-left align-middle transition-all transform bg-white shadow-xl rounded-2xl">
                   <button
                     className="absolute top-4 right-4 z-20 text-gray-500 hover:text-gray-700"
                     onClick={() => setModalProduct(null)}
@@ -167,14 +157,14 @@ export default function ProductSection({ rows }: Props) {
                   </button>
 
                   <div className="flex flex-col md:flex-row gap-6">
-                    {/* Imagen interactiva 3D */}
+                    {/* Imagen 3D */}
                     <Tilt
                       glareEnable
                       glareMaxOpacity={0.25}
                       glareColor="#ffffff"
                       tiltMaxAngleX={20}
                       tiltMaxAngleY={20}
-                      className="z-0 w-full md:w-1/2 h-64 md:h-auto rounded-lg overflow-hidden bg-gray-100"
+                      className="w-full md:w-1/2 h-64 md:h-auto rounded-lg overflow-hidden bg-gray-100"
                     >
                       <img
                         src={`/products/${modalProduct.image}.jpg`}
@@ -183,9 +173,12 @@ export default function ProductSection({ rows }: Props) {
                       />
                     </Tilt>
 
-                    {/* Detalles del producto */}
+                    {/* Detalles */}
                     <div className="flex-1 space-y-4">
-                      <Dialog.Title as="h3" className="text-xl md:text-2xl font-bold text-gray-900">
+                      <Dialog.Title
+                        as="h3"
+                        className="text-xl md:text-2xl font-bold text-gray-900"
+                      >
                         {modalProduct.name}
                       </Dialog.Title>
 
@@ -207,7 +200,7 @@ export default function ProductSection({ rows }: Props) {
 
                       {modalProduct.rating != null && (
                         <div className="flex items-center gap-1">
-                          {[...Array(5)].map((_, i) => (
+                          {Array.from({ length: 5 }).map((_, i) => (
                             <Star
                               key={i}
                               size={20}
@@ -218,20 +211,46 @@ export default function ProductSection({ rows }: Props) {
                               }
                             />
                           ))}
-                          <span className="text-gray-500 text-sm">({modalProduct.reviews})</span>
+                          <span className="text-gray-500 text-sm">
+                            ({modalProduct.reviews})
+                          </span>
                         </div>
                       )}
 
                       <p className="text-gray-700 text-sm">
-                        Aquí puedes detallar ingredientes, usos y toda la información del producto.
+                        Aquí puedes detallar ingredientes, usos y toda la información
+                        del producto.
                       </p>
 
+                      {/* BOTÓN: Agregar al carrito */}
                       <button
-                        onClick={() => setModalProduct(null)}
-                        className="mt-4 w-full bg-emerald-500 hover:bg-emerald-600 text-white font-semibold py-2 rounded-lg flex items-center justify-center gap-2"
+                        onClick={() => {/* tu lógica de carrito */}}
+                        className="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-semibold py-2 rounded-lg flex items-center justify-center gap-2"
                       >
-                        <ShoppingCart size={18} /> Agregar al carrito
+                        <ShoppingCart size={18} />
+                        Agregar al carrito
                       </button>
+
+                      {/* BOTÓN: Agregar/Quitar favoritos 🆕 */}
+                      {(() => {
+                        const isFav = favorites.some(f => f.id === modalProduct.id);
+                        return (
+                          <button
+                            onClick={() => toggleFavorite(modalProduct)}
+                            className={`w-full border font-semibold py-2 rounded-lg flex items-center justify-center gap-2 transition ${
+                              isFav
+                                ? 'bg-red-500 hover:bg-red-600 text-white border-red-500'
+                                : 'bg-white hover:bg-gray-100 text-gray-700 border-gray-300'
+                            }`}
+                          >
+                            <Heart
+                              size={18}
+                              className={isFav ? 'fill-current text-white' : 'text-gray-700'}
+                            />
+                            {isFav ? 'Quitar de favoritos' : 'Agregar a favoritos'}
+                          </button>
+                        );
+                      })()}
                     </div>
                   </div>
                 </Dialog.Panel>
@@ -243,6 +262,7 @@ export default function ProductSection({ rows }: Props) {
     </>
   );
 }
+
 
 /* ────────────────── RowBlock ────────────────── */
 function RowBlock({

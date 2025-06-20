@@ -28,23 +28,23 @@ export default function LocationPicker() {
     libraries: ['places']
   });
 
-  const onMapClick = useCallback((e: google.maps.MapMouseEvent) => {
-    if (!e.latLng) return;
-    const lat = e.latLng.lat();
-    const lng = e.latLng.lng();
-    setMapCoords({ lat, lng });
-    const geocoder = new google.maps.Geocoder();
-    geocoder.geocode(
-      { location: { lat, lng } },
-      (results, status) => {
+  const onMapClick = useCallback(
+    (e: google.maps.MapMouseEvent) => {
+      if (!e.latLng) return;
+      const lat = e.latLng.lat();
+      const lng = e.latLng.lng();
+      setMapCoords({ lat, lng });
+      const geocoder = new google.maps.Geocoder();
+      geocoder.geocode({ location: { lat, lng } }, (results, status) => {
         if (status === 'OK' && results && results.length > 0) {
           setMapAddress(results[0].formatted_address);
         } else {
           setMapAddress(null);
         }
-      }
-    );
-  }, [setMapCoords, setMapAddress]);
+      });
+    },
+    [setMapCoords, setMapAddress]
+  );
 
   return (
     <>
@@ -56,9 +56,11 @@ export default function LocationPicker() {
             <Transition.Child
               as={Fragment}
               enter="ease-out duration-300"
-              enterFrom="opacity-0 scale-95" enterTo="opacity-100 scale-100"
+              enterFrom="opacity-0 scale-95"
+              enterTo="opacity-100 scale-100"
               leave="ease-in duration-200"
-              leaveFrom="opacity-100 scale-100" leaveTo="opacity-0 scale-95"
+              leaveFrom="opacity-100 scale-100"
+              leaveTo="opacity-0 scale-95"
             >
               <div className="relative z-10 flex w-full max-w-2xl bg-white rounded-2xl shadow-xl overflow-hidden">
                 {/* Cerrar */}
@@ -118,33 +120,43 @@ export default function LocationPicker() {
             <Transition.Child
               as={Fragment}
               enter="ease-out duration-300"
-              enterFrom="opacity-0 scale-95" enterTo="opacity-100 scale-100"
+              enterFrom="opacity-0 scale-95"
+              enterTo="opacity-100 scale-100"
               leave="ease-in duration-200"
-              leaveFrom="opacity-100 scale-100" leaveTo="opacity-0 scale-95"
+              leaveFrom="opacity-100 scale-100"
+              leaveTo="opacity-0 scale-95"
             >
-              <div className="relative z-10 w-full max-w-3xl bg-white rounded-2xl shadow-xl overflow-hidden">
+              <div className="relative z-10 w-full max-w-3xl bg-white rounded-2xl shadow-xl overflow-visible">
                 {/* Header */}
                 <div className="relative flex items-center justify-center border-b p-4">
                   <Dialog.Title className="text-lg font-semibold">
                     Mueva el mapa para encontrar su ubicación
                   </Dialog.Title>
+
+                  {/* Botón cerrar: mobile sale fuera, sm+ dentro */}
                   <button
                     onClick={closeMapPicker}
-                    className="absolute top-4 right-4 w-8 h-8 bg-green-500 rounded-full flex items-center justify-center text-white hover:bg-green-600 transition"
+                    className="
+                      absolute
+                      -top-4 -right-4
+                      sm:top-4 sm:right-4 sm:-top-0 sm:-right-0
+                      w-8 h-8 bg-green-500 rounded-full
+                      flex items-center justify-center text-white
+                      hover:bg-green-600 transition
+                    "
                   >
                     <X size={20} />
                   </button>
                 </div>
 
                 {/* Dirección + Confirmar */}
-                <div className="flex items-center gap-4 p-4 bg-gray-50">
-                  <div className="flex-1 flex items-center justify-between bg-white border rounded-lg px-4 py-2">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 p-4 bg-gray-50">
+                  <div className="flex-1 flex items-center justify-between bg-white border rounded-lg px-4 py-2 w-full sm:w-auto">
                     <span className="text-gray-700 text-sm line-clamp-1">
                       {mapAddress || 'Ubicación no disponible'}
                     </span>
                     <button
                       onClick={() => {
-                        // reabrir selector de método si quiere cambiar
                         closeMapPicker();
                         openMapPicker();
                       }}
@@ -153,12 +165,12 @@ export default function LocationPicker() {
                       Cambiar
                     </button>
                   </div>
-  <button
-    onClick={confirmMapLocation}
-    className="bg-green-500 hover:bg-green-600 text-white px-6 py-2 rounded-lg text-sm font-semibold transition flex-shrink-0"
-  >
-    Confirmar mi ubicación
-  </button>
+                  <button
+                    onClick={confirmMapLocation}
+                    className="bg-green-500 hover:bg-green-600 text-white px-6 py-2 rounded-lg text-sm font-semibold transition flex-shrink-0 w-full sm:w-auto"
+                  >
+                    Confirmar mi ubicación
+                  </button>
                 </div>
 
                 {/* Mapa */}
