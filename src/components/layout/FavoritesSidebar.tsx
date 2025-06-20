@@ -2,15 +2,18 @@
 'use client';
 
 import { useFavorites } from '@/context/FavoritesContext';
-import { X, Trash2 } from 'lucide-react';
+import { useLocation } from '@/context/LocationContext';
+import { X, Trash2, MapPin } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
 export default function FavoritesSidebar() {
   const { favorites, isOpen, closeSidebar, toggleFavorite } = useFavorites();
+  const { location } = useLocation();
+
   const [redBarHeight, setRedBarHeight] = useState(0);
   const [fullHeaderHeight, setFullHeaderHeight] = useState(0);
 
-  // Mide la franja roja y el header completo
+  // Mide la franja roja y todo el header
   useEffect(() => {
     const redEl = document.querySelector('.bg-red-600');
     if (redEl) setRedBarHeight(redEl.getBoundingClientRect().height);
@@ -18,14 +21,14 @@ export default function FavoritesSidebar() {
     if (headerEl) setFullHeaderHeight(headerEl.getBoundingClientRect().height);
   }, []);
 
-  // Cuando el sidebar abre, bloquea scroll y compensa el scrollbar width
+  // Bloquea scroll en body y compensa scrollbar al abrir
   useEffect(() => {
     const html = document.documentElement;
     const body = document.body;
     if (isOpen) {
-      const scrollbarWidth = window.innerWidth - html.clientWidth;
+      const sbw = window.innerWidth - html.clientWidth;
       body.style.overflow = 'hidden';
-      html.style.paddingRight = `${scrollbarWidth}px`;
+      html.style.paddingRight = `${sbw}px`;
     } else {
       body.style.overflow = '';
       html.style.paddingRight = '';
@@ -38,11 +41,11 @@ export default function FavoritesSidebar() {
 
   return (
     <>
-      {/* Overlay gris con blur y fade */}
+      {/* Overlay gris */}
       <div
         style={{
           top: fullHeaderHeight,
-          height: `calc(100vh - ${fullHeaderHeight}px)`,
+          height: `calc(100vh - ${fullHeaderHeight}px)`
         }}
         className={`
           fixed inset-x-0 bg-black/30 backdrop-blur-sm
@@ -53,33 +56,32 @@ export default function FavoritesSidebar() {
         onClick={closeSidebar}
       />
 
-      {/* Sidebar animado */}
+      {/* Sidebar */}
       <aside
         style={{
           top: redBarHeight,
-          height: `calc(100vh - ${redBarHeight}px)`,
+          height: `calc(100vh - ${redBarHeight}px)`
         }}
         className={`
-          fixed right-0 w-80 bg-white shadow-2xl rounded-l-2xl
+          fixed right-0 w-full sm:w-80 bg-white shadow-2xl rounded-l-2xl
+          flex flex-col
           transform transition-all duration-500 ease-out origin-top-right
-          ${isOpen
-            ? 'translate-x-0 scale-100 opacity-100'
-            : 'translate-x-full scale-95 opacity-0'}
+          ${isOpen ? 'translate-x-0 opacity-100 scale-100' : 'translate-x-full opacity-0 scale-95'}
           z-50
         `}
       >
         {/* Cabecera */}
         <div className="bg-green-600 text-white px-4 py-3 flex items-center justify-between rounded-tl-2xl">
           <h2 className="font-semibold text-lg">Mi Lista de Favoritos</h2>
-          <button onClick={closeSidebar}>
+          <button onClick={closeSidebar} aria-label="Cerrar">
             <X size={20} />
           </button>
         </div>
 
-        {/* Contenido scrollable */}
-        <div className="p-4 space-y-4 overflow-y-auto h-[calc(100%-7rem)]">
+        {/* Lista scrollable */}
+        <div className="flex-1 overflow-y-auto p-4 space-y-4">
           {favorites.length === 0 ? (
-            <p className="text-gray-500">Aún no tienes favoritos.</p>
+            <p className="text-gray-500 text-center">Aún no tienes favoritos.</p>
           ) : (
             favorites.map((p) => (
               <div
@@ -93,30 +95,40 @@ export default function FavoritesSidebar() {
                 />
                 <div className="flex-1">
                   <p className="font-medium leading-tight">{p.name}</p>
-                  <p className="text-emerald-600 text-sm">
-                    S/{p.price.toFixed(2)}
-                  </p>
+                  <p className="text-emerald-600 text-sm">S/{p.price.toFixed(2)}</p>
                 </div>
+                {/* Botón solo icono */}
                 <button
                   onClick={() => toggleFavorite(p)}
                   className="text-red-500 hover:text-red-700 transition-colors"
+                  aria-label="Eliminar favorito"
                 >
-                  Quitar
+                  <Trash2 size={18} />
                 </button>
               </div>
             ))
           )}
         </div>
 
-        {/* Pie: Vaciar todos */}
+        {/* Dirección seleccionada */}
+        <div className="flex items-center gap-2 px-4 py-3 bg-gray-50 text-gray-600 text-sm">
+          <MapPin size={16} />
+          {location ? (
+            <span>{location}</span>
+          ) : (
+            <span className="italic">Seleccione ubicación</span>
+          )}
+        </div>
+
+        {/* Pie: Vaciar favoritos */}
         {favorites.length > 0 && (
-          <div className="p-4 border-t">
+          <div className="px-4 py-3 border-t">
             <button
-              onClick={() => favorites.forEach(toggleFavorite)}
+              onClick={() => favorites.forEach((f) => toggleFavorite(f))}
               className="w-full flex items-center justify-center gap-2 text-sm
-                         px-4 py-2 rounded border text-gray-600 hover:bg-gray-100 transition"
+                         py-2 rounded border text-gray-600 hover:bg-gray-100 transition"
             >
-              <Trash2 size={16} /> Vaciar Favoritos
+              <Trash2 size={16} /> Vaciar favoritos
             </button>
           </div>
         )}

@@ -2,7 +2,7 @@
 'use client';
 
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import type { Product } from '@/components/sections/ProductSection'; // o donde definas tu interfaz
+import type { Product } from '@/components/sections/ProductSection';
 
 interface FavoritesContextType {
   favorites: Product[];
@@ -18,26 +18,28 @@ export function FavoritesProvider({ children }: { children: React.ReactNode }) {
   const [favorites, setFavorites] = useState<Product[]>([]);
   const [isOpen, setIsOpen] = useState(false);
 
-  // cargar
+  // Carga desde localStorage
   useEffect(() => {
-    const json = localStorage.getItem('galvan-fav');
-    if (json) {
-      try { setFavorites(JSON.parse(json)); }
-      catch {}
+    const stored = localStorage.getItem('galvan-fav');
+    if (stored) {
+      try {
+        setFavorites(JSON.parse(stored));
+      } catch {}
     }
   }, []);
 
-  // guardar
+  // Persiste en localStorage
   useEffect(() => {
     localStorage.setItem('galvan-fav', JSON.stringify(favorites));
   }, [favorites]);
 
   const toggleFavorite = (product: Product) => {
     setFavorites(prev => {
-      const exists = prev.find(x => x.id === product.id);
+      const exists = prev.some(x => x.id === product.id);
       if (exists) return prev.filter(x => x.id !== product.id);
       return [...prev, product];
     });
+    // sonido de feedback
     const audio = new Audio('/sounds/favorite.mp3');
     audio.volume = 0.5;
     audio.play();
@@ -50,7 +52,7 @@ export function FavoritesProvider({ children }: { children: React.ReactNode }) {
         toggleFavorite,
         isOpen,
         openSidebar: () => setIsOpen(true),
-        closeSidebar: () => setIsOpen(false),
+        closeSidebar: () => setIsOpen(false)
       }}
     >
       {children}

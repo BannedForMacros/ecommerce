@@ -5,9 +5,11 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { Search, Heart, MapPin } from 'lucide-react';
 import { useFavorites } from '@/context/FavoritesContext';
+import { useLocation } from '@/context/LocationContext';
 
 export default function Navbar() {
   const { openSidebar, favorites } = useFavorites();
+  const { openLocationPicker, location } = useLocation();
 
   return (
     <header>
@@ -26,25 +28,38 @@ export default function Navbar() {
           </Link>
 
           {/* Íconos lado derecho */}
-          <div className="flex items-center gap-4 text-sm">
+          <div className="flex items-center gap-6 text-sm">
+            {/* Favoritos */}
             <button
               onClick={openSidebar}
               className="flex items-center gap-1 hover:opacity-80"
             >
-               <Heart className="w-4 h-4" />
-                <span>
-                  FAVORITOS
-                  {favorites.length > 0 && (
-                    <span className="ml-1 px-1 bg-white text-green-700 rounded text-xs">
-                      {favorites.length}
-                    </span>
-                  )}
-                </span>
+              <Heart className="w-4 h-4" />
+              <span>
+                FAVORITOS
+                {favorites.length > 0 && (
+                  <span className="ml-1 px-1 bg-white text-green-700 rounded text-xs">
+                    {favorites.length}
+                  </span>
+                )}
+              </span>
             </button>
-            <div className="flex items-center gap-1">
+
+            {/* Ubicación */}
+            <button
+              onClick={openLocationPicker}
+              className="flex items-center gap-1 hover:opacity-80"
+            >
               <MapPin className="w-4 h-4" />
-              <span>MI UBICACIÓN</span>
-            </div>
+              <span>
+                MI UBICACIÓN
+                {location && (
+                  <span className="ml-1 px-1 bg-white text-green-700 rounded text-xs">
+                    {location}
+                  </span>
+                )}
+              </span>
+            </button>
           </div>
         </div>
       </div>
