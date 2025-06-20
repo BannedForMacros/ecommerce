@@ -2,12 +2,17 @@ import HeroBanner   from '@/components/sections/HeroBanner';
 import ProductSection from '@/components/sections/ProductSection';
 import MegaSection  from '@/components/sections/CategoriesWave';
 import WaveToRed    from '@/components/ui/WaveToRed';
+import FavoritesSidebar from '@/components/layout/FavoritesSidebar';
 
 import { promos, best, categories } from '@/data/homeMock';
 
 export default function Home() {
   return (
     <>
+
+
+    <FavoritesSidebar />
+
       <HeroBanner />
 
       <ProductSection

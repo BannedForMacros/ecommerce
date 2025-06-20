@@ -1,10 +1,14 @@
+// src/components/layout/Navbar.tsx
 'use client';
 
 import Link from 'next/link';
 import Image from 'next/image';
 import { Search, Heart, MapPin } from 'lucide-react';
+import { useFavorites } from '@/context/FavoritesContext';
 
 export default function Navbar() {
+  const { openSidebar, favorites } = useFavorites();
+
   return (
     <header>
       {/* ── Franja roja superior ─────────────────────────────── */}
@@ -23,10 +27,20 @@ export default function Navbar() {
 
           {/* Íconos lado derecho */}
           <div className="flex items-center gap-4 text-sm">
-            <div className="flex items-center gap-1">
-              <Heart className="w-4 h-4" />
-              <span>MIS FAVORITOS</span>
-            </div>
+            <button
+              onClick={openSidebar}
+              className="flex items-center gap-1 hover:opacity-80"
+            >
+               <Heart className="w-4 h-4" />
+                <span>
+                  FAVORITOS
+                  {favorites.length > 0 && (
+                    <span className="ml-1 px-1 bg-white text-green-700 rounded text-xs">
+                      {favorites.length}
+                    </span>
+                  )}
+                </span>
+            </button>
             <div className="flex items-center gap-1">
               <MapPin className="w-4 h-4" />
               <span>MI UBICACIÓN</span>
@@ -37,12 +51,14 @@ export default function Navbar() {
 
       {/* ── Franja verde con navegación + buscador ───────────── */}
       <div className="bg-green-600 text-white">
-        <div className="
+        <div
+          className="
             max-w-7xl mx-auto
             flex flex-col sm:flex-row
             items-start sm:items-center
             gap-2 px-4 py-2
-          ">
+          "
+        >
           {/* Botones */}
           <div className="flex flex-wrap gap-2 w-full sm:w-auto">
             <button className="bg-green-700 hover:bg-green-800 px-3 py-1 rounded text-xs md:text-sm font-medium">

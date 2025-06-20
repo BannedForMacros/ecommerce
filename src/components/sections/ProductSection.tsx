@@ -13,6 +13,8 @@ import {
   Star,
   X
 } from 'lucide-react';
+ import { useFavorites } from '@/context/FavoritesContext';
+
 
 /* ────────────────── Tipos ────────────────── */
 export interface Product {
@@ -60,9 +62,43 @@ export default function ProductSection({ rows }: Props) {
 
   return (
     <>
-      {/* ───────── Sección de filas ───────── */}
-      <section className="py-12 bg-gradient-to-b from-gray-50 to-white">
-        <div className="max-w-7xl mx-auto px-4 space-y-16">
+      {/* ───────── Sección de filas con fondo de onda ───────── */}
+      <section className="py-12 relative overflow-hidden">
+        {/* Fondo con onda suave */}
+        <div className="absolute inset-0 bg-gradient-to-b from-gray-50 to-white">
+          {/* Parte verde con ondas suaves usando SVG */}
+          <div className="absolute top-0 left-0 w-full h-full">
+            <svg
+              className="absolute top-0 left-0 w-full h-full"
+              viewBox="0 0 1200 600"
+              preserveAspectRatio="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <defs>
+                <linearGradient id="greenGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                  <stop offset="0%" stopColor="#E7FAED" />
+                  <stop offset="100%" stopColor="#D1F2DF" />
+                </linearGradient>
+              </defs>
+              <path
+                d="M0,0 L1200,0 L1200,280 
+                   C1150,290 1100,300 1050,295 
+                   C1000,290 950,275 900,285 
+                   C850,295 800,310 750,305 
+                   C700,300 650,285 600,290 
+                   C550,295 500,305 450,300 
+                   C400,295 350,285 300,290 
+                   C250,295 200,305 150,300 
+                   C100,295 50,285 25,280 
+                   L0,275 Z"
+                fill="url(#greenGradient)"
+              />
+            </svg>
+          </div>
+        </div>
+
+        {/* Contenido */}
+        <div className="relative z-10 max-w-7xl mx-auto px-4 space-y-16">
           {rows.map((row, idx) => (
             <div
               key={idx}
@@ -304,9 +340,12 @@ function ProductCard({
   onClick: () => void;
 }) {
   const [hover, setHover] = useState(false);
-  const [liked, setLiked] = useState(false);
   const [loaded, setLoaded] = useState(false);
   const imgRef = useRef<HTMLImageElement>(null);
+
+  // 🚀 aquí traemos el contexto:
+  const { favorites, toggleFavorite } = useFavorites();
+  const isFav = favorites.some(f => f.id === product.id);
 
   useEffect(() => {
     if (imgRef.current?.complete && !loaded) setLoaded(true);
@@ -349,13 +388,13 @@ function ProductCard({
         <button
           onClick={e => {
             e.stopPropagation();
-            setLiked(!liked);
+            toggleFavorite(product);
           }}
           className={`p-2 rounded-full backdrop-blur-sm transition-all duration-200 ${
-            liked ? 'bg-red-500 text-white' : 'bg-white/90 text-gray-600 hover:text-red-500'
+            isFav ? 'bg-red-500 text-white hover:bg-red-600' : 'bg-white/90 text-gray-600 hover:text-emerald-600'
           }`}
         >
-          <Heart size={16} className={liked ? 'fill-current' : ''} />
+          <Heart size={16} fill = {isFav ? 'currentColor' : 'none'} />
         </button>
         <button className="p-2 bg-white/90 backdrop-blur-sm rounded-full text-gray-600 hover:text-emerald-600 transition-colors duration-200">
           <Eye size={16} />
