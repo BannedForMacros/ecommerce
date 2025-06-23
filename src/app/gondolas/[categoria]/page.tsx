@@ -1,4 +1,3 @@
-'use client'
 
 /* ------------------------------------------------------------------
    IMPORTS
@@ -321,8 +320,3 @@ export default function SubGondolaPage({
 // Configuración para Vercel
 export const dynamic = 'force-dynamic'
 
-export async function generateStaticParams() {
-  return [
-    { categoria: 'licores' },
-  ]
-}
