@@ -8,6 +8,7 @@ import {
   useMemo,
   useState,
 }                     from 'react'
+import { useCart } from '@/context/CartContext'
 import {
   useRouter,
   useSearchParams,
@@ -49,6 +50,7 @@ function Card({
   onOpen: (p: Product) => void
 }) {
   const { favorites, toggleFavorite } = useFavorites()
+  const { add } = useCart()
   const isFav         = favorites.some(f => f.id === p.id)
   const ratingRounded = Math.round(p.rating ?? 0)
   const imgSrc        = p.image.startsWith('http')
@@ -110,10 +112,10 @@ function Card({
       </div>
 
       <button
-        onClick={e => e.stopPropagation()}
-        className="mt-3 w-full bg-emerald-500 hover:bg-emerald-600 text-white text-sm py-2 rounded-lg flex items-center justify-center gap-2"
+        onClick={() => add(p, 1)}
+        className="mt-2 flex-1 bg-emerald-500 hover:bg-emerald-600 text-white font-semibold py-2 rounded-lg flex items-center justify-center gap-2"
       >
-        <ShoppingCart size={14} /> Agregar
+        <ShoppingCart size={16} /> Agregar al carrito
       </button>
     </div>
   )
