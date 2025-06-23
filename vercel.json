@@ -1,0 +1,13 @@
+{
+  "functions": {
+    "app/**/*.{ts,tsx}": {
+      "runtime": "nodejs18.x"
+    }
+  },
+  "rewrites": [
+    {
+      "source": "/gondolas/:path*",
+      "destination": "/gondolas/:path*"
+    }
+  ]
+}
