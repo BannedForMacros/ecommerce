@@ -5,6 +5,8 @@ import FavoritesSidebar from '../components/layout/FavoritesSidebar';
 import { FavoritesProvider } from '../context/FavoritesContext';
 import { LocationProvider } from '@/context/LocationContext';
 import LocationPicker from '../components/ui/LocationPicker';
+import { CartProvider } from '@/context/CartContext';
+import CartSidebar from '@/components/layout/CartSidebar';
 
 export const metadata = {
   title: 'Galvan Store',
@@ -18,12 +20,15 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         {/* 1) Envuelvo TODO en el provider */}
         <FavoritesProvider>
           <LocationProvider>
-            <Navbar />
-            <FavoritesSidebar />
-            <LocationPicker />
+            <CartProvider>
+              <Navbar />
+              <FavoritesSidebar />
+              <CartSidebar />
+              <LocationPicker />
 
-            <main>{children}</main>
-            <Footer />
+              <main>{children}</main>
+              <Footer />
+            </CartProvider>
           </LocationProvider>
         </FavoritesProvider>
       </body>

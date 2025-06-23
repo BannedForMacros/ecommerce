@@ -14,6 +14,7 @@ import {
   X
 } from 'lucide-react';
 import { useFavorites } from '@/context/FavoritesContext';   /* 🆕 */
+import { useCart } from '@/context/CartContext' 
 
 export interface Product {
   id: string | number;
@@ -59,6 +60,10 @@ export default function ProductSection({ rows }: Props) {
       .forEach(el => obs.observe(el));
     return () => obs.disconnect();
   }, []);
+
+  // Utiliza el contexto del carrito para agregar el producto desde el modal
+  const { add } = useCart();
+
 
   return (
     <>
@@ -224,11 +229,13 @@ export default function ProductSection({ rows }: Props) {
 
                       {/* BOTÓN: Agregar al carrito */}
                       <button
-                        onClick={() => {/* tu lógica de carrito */}}
-                        className="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-semibold py-2 rounded-lg flex items-center justify-center gap-2"
+                        onClick={e => {
+                          e.stopPropagation()
+                          add(modalProduct, 1)
+                        }}
+                        className="w-full bg-emerald-500 hover:bg-emerald-600 ..."
                       >
-                        <ShoppingCart size={18} />
-                        Agregar al carrito
+                        <ShoppingCart /> Agregar
                       </button>
 
                       {/* BOTÓN: Agregar/Quitar favoritos 🆕 */}
@@ -362,6 +369,7 @@ function ProductCard({
   const [hover, setHover] = useState(false);
   const [loaded, setLoaded] = useState(false);
   const imgRef = useRef<HTMLImageElement>(null);
+  const { add } = useCart() 
 
   // 🚀 aquí traemos el contexto:
   const { favorites, toggleFavorite } = useFavorites();
@@ -467,7 +475,13 @@ function ProductCard({
           )}
         </div>
 
-        <button className="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-semibold py-2 md:py-2.5 px-2 md:px-4 rounded-lg transition-colors duration-200 flex items-center justify-center gap-2 text-xs md:text-sm">
+        <button
+          className="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-semibold py-2 md:py-2.5 px-2 md:px-4 rounded-lg transition-colors duration-200 flex items-center justify-center gap-2 text-xs md:text-sm"
+          onClick={e => {
+            e.stopPropagation();
+            add(product, 1);
+          }}
+        >
           <ShoppingCart size={14} className="md:w-4 md:h-4" /> Agregar
         </button>
       </div>
