@@ -1,8 +1,10 @@
+'use client'
 
 /* ------------------------------------------------------------------
    IMPORTS
    ------------------------------------------------------------------ */
 import {
+  use as usePromise,
   Fragment,
   useMemo,
   useState,
@@ -36,6 +38,13 @@ const DATA: Record<
   { title: string; subcats: Record<string, Product[]> }
 > = {
   licores: { title: 'Licores', subcats: MOCK_LICORES },
+}
+
+/* ------------------------------------------------------------------
+   HELPERS
+   ------------------------------------------------------------------ */
+function isPromise<T>(v: unknown): v is Promise<T> {
+  return typeof v === 'object' && v !== null && 'then' in v
 }
 
 /* ------------------------------------------------------------------
@@ -240,10 +249,12 @@ function ProductModal({
 export default function SubGondolaPage({
   params,
 }: {
-  params: { categoria: string }
+  params: { categoria: string } | Promise<{ categoria: string }>
 }) {
-  // Sintaxis compatible con Vercel
-  const categoria = params.categoria
+  // unwrap Promise (Next 15.3)
+  const { categoria } = usePromise(
+    isPromise<{ categoria: string }>(params) ? params : Promise.resolve(params)
+  )
 
   const router       = useRouter()
   const searchParams = useSearchParams()
@@ -316,7 +327,3 @@ export default function SubGondolaPage({
     </>
   )
 }
-
-// Configuración para Vercel
-export const dynamic = 'force-dynamic'
-
