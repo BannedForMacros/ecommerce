@@ -1,13 +1,20 @@
 {
   "functions": {
+    "app/gondolas/page.tsx": {
+      "runtime": "nodejs18.x"
+    },
     "app/gondolas/[categoria]/page.tsx": {
       "runtime": "nodejs18.x"
     }
   },
-  "routes": [
+  "rewrites": [
     {
-      "src": "/gondolas/([^/]+)",
-      "dest": "/gondolas/[categoria]?categoria=$1"
+      "source": "/gondolas",
+      "destination": "/gondolas"
+    },
+    {
+      "source": "/gondolas/(.*)",
+      "destination": "/gondolas/$1"
     }
   ]
 }
