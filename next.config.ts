@@ -1,15 +1,7 @@
+import type { NextConfig } from "next";
 
-/** @type {import('next').NextConfig} */
-const nextConfig = {
-  trailingSlash: false,
-  async rewrites() {
-    return [
-      {
-        source: '/gondolas/:path*',
-        destination: '/gondolas/:path*',
-      },
-    ]
-  },
-}
+const nextConfig: NextConfig = {
+  /* config options here */
+};
 
-module.exports = nextConfig
+export default nextConfig;
