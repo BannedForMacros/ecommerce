@@ -11,9 +11,8 @@ import {
 import {
   useRouter,
   useSearchParams,
-  notFound,
+  useParams,
 }                     from 'next/navigation'
-import Image          from 'next/image'
 import Link           from 'next/link'
 import Tilt           from 'react-parallax-tilt'
 import { Dialog, Transition } from '@headlessui/react'
@@ -63,12 +62,10 @@ function Card({
     >
       {/* imagen */}
       <div className="h-40 bg-gray-50 rounded-lg overflow-hidden mb-3">
-        <Image
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
           src={imgSrc}
           alt={p.name}
-          width={320}
-          height={320}
-          unoptimized={p.image.startsWith('http')}
           className="object-contain w-full h-full"
         />
       </div>
@@ -123,7 +120,7 @@ function Card({
 }
 
 /* ------------------------------------------------------------------
-   MODAL DETALLE
+   MODAL DETALLE  (sin cambios)
    ------------------------------------------------------------------ */
 function ProductModal({
   product,
@@ -170,12 +167,10 @@ function ProductModal({
                   glareColor="#ffffff"
                   className="w-full md:w-1/2 h-64 md:h-auto rounded-lg bg-gray-100 overflow-hidden"
                 >
-                  <Image
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
                     src={imgSrc}
                     alt={product.name}
-                    width={550}
-                    height={550}
-                    unoptimized={product.image.startsWith('http')}
                     className="object-contain w-full h-full"
                   />
                 </Tilt>
@@ -211,7 +206,6 @@ function ProductModal({
                   </p>
 
                   <div className="flex gap-3">
-                    {/* botón favoritos dentro del modal */}
                     <button
                       onClick={() => toggleFavorite(product)}
                       className={`flex-1 py-3 rounded-lg font-semibold border transition
@@ -236,28 +230,32 @@ function ProductModal({
 }
 
 /* ------------------------------------------------------------------
-   PAGE
+   PAGE  (hooks al tope, returns después)
    ------------------------------------------------------------------ */
-export default function SubGondolaPage({
-  params,
-}: {
-  params: { categoria: string }          // siempre objeto en componentes client
-}) {
-  const { categoria } = params
+export default function SubGondolaPage() {
+  const { categoria } = useParams<{ categoria?: string }>() ?? {}
+  const router         = useRouter()
+  const searchParams   = useSearchParams()
 
-  const router       = useRouter()
-  const searchParams = useSearchParams()
+  /* ── hooks SIEMPRE al principio ── */
+  const catEntry  = DATA[categoria ?? ''] ?? null
+  const subKeys   = useMemo(
+    () => (catEntry ? Object.keys(catEntry.subcats) : []), 
+    [catEntry]
+  )
+  const [modalProd, setModalProd] = useState<Product | null>(null)
 
-  const catEntry = DATA[categoria]
-  if (!catEntry) notFound()
+  /* ── returns tempranos (después de hooks) ── */
+  if (!categoria) return null
+  if (!catEntry) {
+    return <main className="p-10 text-center text-xl">Categoría no encontrada</main>
+  }
 
-  const subKeys     = useMemo(() => Object.keys(catEntry.subcats), [catEntry])
+  /* resto */
   const defaultSub  = subKeys[0]
   const selectedSub = searchParams?.get('sub') || defaultSub
-  const setSub      = (sub:string) =>
-    router.replace(`?sub=${encodeURIComponent(sub)}`, { scroll:false })
-
-  const [modalProd, setModalProd] = useState<Product | null>(null)
+  const setSub      = (sub: string) =>
+    router.replace(`?sub=${encodeURIComponent(sub)}`, { scroll: false })
 
   return (
     <>
@@ -276,11 +274,10 @@ export default function SubGondolaPage({
         <div className="flex gap-10">
           {/* lateral */}
           <aside className="w-48 shrink-0">
-            <Image
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
               src={`/gondolas/${categoria}.jpg`}
               alt={catEntry.title}
-              width={192}
-              height={96}
               className="w-full h-24 object-cover rounded-t-xl"
             />
             <ul className="bg-white border border-gray-200 rounded-b-xl">
