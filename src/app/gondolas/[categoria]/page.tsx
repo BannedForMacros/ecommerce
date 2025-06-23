@@ -4,7 +4,6 @@
    IMPORTS
    ------------------------------------------------------------------ */
 import {
-  use as usePromise,
   Fragment,
   useMemo,
   useState,
@@ -38,13 +37,6 @@ const DATA: Record<
   { title: string; subcats: Record<string, Product[]> }
 > = {
   licores: { title: 'Licores', subcats: MOCK_LICORES },
-}
-
-/* ------------------------------------------------------------------
-   HELPERS
-   ------------------------------------------------------------------ */
-function isPromise<T>(v: unknown): v is Promise<T> {
-  return typeof v === 'object' && v !== null && 'then' in v
 }
 
 /* ------------------------------------------------------------------
@@ -249,12 +241,9 @@ function ProductModal({
 export default function SubGondolaPage({
   params,
 }: {
-  params: { categoria: string } | Promise<{ categoria: string }>
+  params: { categoria: string }          // siempre objeto en componentes client
 }) {
-  // unwrap Promise (Next 15.3)
-  const { categoria } = usePromise(
-    isPromise<{ categoria: string }>(params) ? params : Promise.resolve(params)
-  )
+  const { categoria } = params
 
   const router       = useRouter()
   const searchParams = useSearchParams()
