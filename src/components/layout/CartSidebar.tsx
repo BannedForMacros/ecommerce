@@ -1,13 +1,15 @@
 /* eslint-disable @next/next/no-img-element */
 'use client'
-import { useCart }     from '@/context/CartContext'
-import { useLocation } from '@/context/LocationContext'
+import { useCart }      from '@/context/CartContext'
+import { useLocation }  from '@/context/LocationContext'
+import { useRouter }    from 'next/navigation'
 import {
   X, Trash2, Minus, Plus, MapPin,
 }                       from 'lucide-react'
 import { useEffect, useState } from 'react'
 
-const imgUrl = (v: string) => /^https?:\/\//.test(v) ? v : `/products/${v}.jpg`
+const imgUrl = (v: string) =>
+  /^https?:\/\//.test(v) ? v : `/products/${v}.jpg`
 
 export default function CartSidebar () {
   const {
@@ -16,13 +18,13 @@ export default function CartSidebar () {
     isOpen, close,
   } = useCart()
   const { location } = useLocation()
+  const router        = useRouter()
 
-  /* para colocar el aside justo debajo de tu franja roja */
-  const [redHeight,   setRedHeight]   = useState(0)
-
+  /* altura para que arranque debajo de la franja roja */
+  const [redHeight, setRedHeight] = useState(0)
   useEffect(() => {
-    const redEl = document.querySelector('.bg-red-600')
-    if (redEl) setRedHeight(redEl.getBoundingClientRect().height)
+    const red = document.querySelector('.bg-red-600')
+    if (red) setRedHeight(red.getBoundingClientRect().height)
   }, [])
 
   /* bloqueo scroll body */
@@ -31,9 +33,13 @@ export default function CartSidebar () {
     return () => { document.body.style.overflow = '' }
   }, [isOpen])
 
+  const goCheckout = () => {
+    close()
+    router.push('/checkout')
+  }
+
   return (
     <>
-      {/* overlay */}
       <div
         className={`
           fixed inset-0 bg-black/30 backdrop-blur-sm transition-opacity
@@ -43,7 +49,6 @@ export default function CartSidebar () {
         onClick={close}
       />
 
-      {/* sidebar */}
       <aside
         style={{ top: redHeight, height: `calc(100vh - ${redHeight}px)` }}
         className={`
@@ -52,47 +57,41 @@ export default function CartSidebar () {
           ${isOpen ? 'translate-x-0' : 'translate-x-full'}
         `}
       >
-        {/* cabecera */}
+        {/* header */}
         <div className="bg-green-600 text-white px-5 py-3 flex items-center justify-between rounded-tl-2xl">
           <h2 className="font-semibold">Mi carrito de compras</h2>
           <span className="text-xs bg-white text-green-700 px-2 py-[2px] rounded-full font-bold">
             {totalQty} U
           </span>
-          <button onClick={close} aria-label="Cerrar"><X size={20} /></button>
+          <button onClick={close}><X size={20} /></button>
         </div>
 
-        {/* lista */}
+        {/* items */}
         <div className="flex-1 overflow-y-auto divide-y">
           {items.length === 0 ? (
             <p className="p-6 text-center text-gray-500">Tu carrito está vacío.</p>
           ) : (
             items.map(it => (
               <div key={it.id} className="flex items-center gap-3 p-4">
-                <img
-                  src={imgUrl(it.image)}
-                  alt={it.name}
-                  className="w-14 h-14 object-cover rounded"
-                />
+                <img src={imgUrl(it.image)} alt={it.name} className="w-14 h-14 rounded" />
                 <div className="flex-1">
-                  <p className="font-medium leading-tight">{it.name}</p>
-                  <p className="text-emerald-600 text-sm">S/ {it.price.toFixed(2)}</p>
+                  <p className="text-sm leading-tight">{it.name}</p>
+                  <p className="text-emerald-600 text-sm font-semibold">S/ {it.price.toFixed(2)}</p>
                 </div>
-
-                {/* qty pill */}
                 <div className="flex items-center bg-gray-100 rounded-full">
                   <button
                     onClick={() => changeQty(it.id, it.qty - 1)}
-                    className="p-1.5 hover:text-emerald-600 disabled:opacity-40"
                     disabled={it.qty === 1}
+                    className="p-1.5 hover:text-emerald-600 disabled:opacity-40"
                   >
-                    <Minus size={14} />
+                    <Minus size={14}/>
                   </button>
-                  <span className="px-3 text-sm font-semibold">{it.qty} U</span>
+                  <span className="px-3 text-xs font-bold">{it.qty} U</span>
                   <button
                     onClick={() => changeQty(it.id, it.qty + 1)}
                     className="p-1.5 hover:text-emerald-600"
                   >
-                    <Plus size={14} />
+                    <Plus size={14}/>
                   </button>
                 </div>
               </div>
@@ -103,9 +102,9 @@ export default function CartSidebar () {
         {/* footer */}
         <div className="p-4 border-t space-y-3">
           <div className="flex items-center gap-2 text-gray-600 text-sm">
-            <MapPin size={16} />
+            <MapPin size={16}/>
             {location
-              ? <span>Tu producto será entregado en&nbsp;<b>{location}</b></span>
+              ? <span>Entregar en&nbsp;<b>{location}</b></span>
               : <span className="italic">Seleccione ubicación de entrega</span>}
           </div>
 
@@ -120,6 +119,7 @@ export default function CartSidebar () {
             </button>
 
             <button
+              onClick={goCheckout}
               disabled={items.length === 0}
               className="flex-1 bg-emerald-500 hover:bg-emerald-600 text-white text-sm font-semibold
                          py-2 rounded-lg disabled:opacity-40"
