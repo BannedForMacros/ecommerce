@@ -1,48 +1,63 @@
+/* eslint-disable @next/next/no-img-element */
 'use client'
 
 /* ------------------------------------------------------------------
    IMPORTS
    ------------------------------------------------------------------ */
-import {
-  Fragment,
-  useMemo,
-  useState,
-}                     from 'react'
-import { useCart } from '@/context/CartContext'
+import { Fragment, useMemo, useState } from 'react'
 import {
   useRouter,
   useSearchParams,
   useParams,
-}                     from 'next/navigation'
-import Link           from 'next/link'
-import Tilt           from 'react-parallax-tilt'
+} from 'next/navigation'
+import Link                   from 'next/link'
+import Tilt                   from 'react-parallax-tilt'
 import { Dialog, Transition } from '@headlessui/react'
-import {
-  Heart,
-  Eye,
-  ShoppingCart,
-  Star,
-  X,
-}                     from 'lucide-react'
+import { Heart, Eye, ShoppingCart, Star, X } from 'lucide-react'
 
-import type { Product }         from '@/components/sections/ProductSection'
-import { useFavorites }         from '@/context/FavoritesContext'
-import { MOCK_LICORES }         from '@/data/licoresMock'
+import type { Product }       from '@/components/sections/ProductSection'
+import { useFavorites }       from '@/context/FavoritesContext'
+import { useCart }            from '@/context/CartContext'
+
+/* --------------------  mocks por categoría  --------------------- */
+import { MOCK_LICORES }     from '@/data/licoresMock'
+import MOCK_LACTEOS     from '@/data/LacteosMock'
+import MOCK_BEBIDAS     from '@/data/BebidasMock'
+import MOCK_PASTAS      from '@/data/PastasMock'
+import { MOCK_PASTELERIA } from '@/data/PasteleriaMock'
+import { MOCK_SNACKS }   from '@/data/SnacksMock'
+import { MOCK_ABARROTES } from '@/data/AbarrotesMock'
+import { MOCK_CONGELADOS } from '@/data/CongeladosMock'
+import { MOCK_EMBUTIDOS } from '@/data/EmbutidosMock'
+import { MOCK_ENLATADOS } from '@/data/EnlatadosMock'
+import { MOCK_LIMPIEZA } from '@/data/LimpiezaMock'
+
 
 /* ------------------------------------------------------------------
-   DATA POR CATEGORÍA
+   MAPA GLOBAL DE CATEGORÍAS
+   clave => slug usado en la URL  (/gondolas/slug)
    ------------------------------------------------------------------ */
 const DATA: Record<
   string,
   { title: string; subcats: Record<string, Product[]> }
 > = {
-  licores: { title: 'Licores', subcats: MOCK_LICORES },
+  lacteos    : { title: 'Lácteos',     subcats: MOCK_LACTEOS },
+  bebidas    : { title: 'Bebidas',     subcats: MOCK_BEBIDAS },
+  pastas     : { title: 'Pastas',      subcats: MOCK_PASTAS },
+  pasteleria : { title: 'Pastelería', subcats: MOCK_PASTELERIA },
+  snacks     : { title: 'Snacks',      subcats: MOCK_SNACKS },  
+  abarrotes  : { title: 'Abarrotes',   subcats: MOCK_ABARROTES },
+  congelados : { title: 'Congelados',  subcats: MOCK_CONGELADOS },
+  embutidos  : { title: 'Embutidos',   subcats: MOCK_EMBUTIDOS },
+  enlatados  : { title: 'Enlatados',   subcats: MOCK_ENLATADOS },
+  limpieza   : { title: 'Limpieza',    subcats: MOCK_LIMPIEZA },  
+  licores    : { title: 'Licores',     subcats: MOCK_LICORES },
 }
 
 /* ------------------------------------------------------------------
    CARD
    ------------------------------------------------------------------ */
-function Card({
+function Card ({
   p,
   onOpen,
 }: {
@@ -50,7 +65,8 @@ function Card({
   onOpen: (p: Product) => void
 }) {
   const { favorites, toggleFavorite } = useFavorites()
-  const { add } = useCart()
+  const { add }                      = useCart()
+
   const isFav         = favorites.some(f => f.id === p.id)
   const ratingRounded = Math.round(p.rating ?? 0)
   const imgSrc        = p.image.startsWith('http')
@@ -60,16 +76,12 @@ function Card({
   return (
     <div
       onClick={() => onOpen(p)}
-      className="bg-white border border-gray-200 rounded-xl p-3 shadow-sm hover:shadow-md transition flex flex-col cursor-pointer"
+      className="bg-white border border-gray-200 rounded-xl p-3 shadow-sm
+                 hover:shadow-md transition flex flex-col cursor-pointer"
     >
       {/* imagen */}
       <div className="h-40 bg-gray-50 rounded-lg overflow-hidden mb-3">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src={imgSrc}
-          alt={p.name}
-          className="object-contain w-full h-full"
-        />
+        <img src={imgSrc} alt={p.name} className="object-contain w-full h-full" />
       </div>
 
       <h3 className="text-sm font-semibold line-clamp-2">{p.name}</h3>
@@ -113,7 +125,8 @@ function Card({
 
       <button
         onClick={() => add(p, 1)}
-        className="mt-2 flex-1 bg-emerald-500 hover:bg-emerald-600 text-white font-semibold py-2 rounded-lg flex items-center justify-center gap-2"
+        className="mt-2 flex-1 bg-emerald-500 hover:bg-emerald-600 text-white
+                   font-semibold py-2 rounded-lg flex items-center justify-center gap-2"
       >
         <ShoppingCart size={16} /> Agregar al carrito
       </button>
@@ -122,9 +135,9 @@ function Card({
 }
 
 /* ------------------------------------------------------------------
-   MODAL DETALLE  (sin cambios)
+   MODAL DETALLE (sin cambios significativos)
    ------------------------------------------------------------------ */
-function ProductModal({
+function ProductModal ({
   product,
   onClose,
 }: {
@@ -132,13 +145,14 @@ function ProductModal({
   onClose: () => void
 }) {
   const { favorites, toggleFavorite } = useFavorites()
+  const { add }                      = useCart()
   if (!product) return null
 
   const isFav         = favorites.some(f => f.id === product.id)
+  const ratingRounded = Math.round(product.rating ?? 0)
   const imgSrc        = product.image.startsWith('http')
     ? product.image
     : `/products/${product.image}.jpg`
-  const ratingRounded = Math.round(product.rating ?? 0)
 
   return (
     <Transition.Root show={!!product} as={Fragment}>
@@ -169,12 +183,7 @@ function ProductModal({
                   glareColor="#ffffff"
                   className="w-full md:w-1/2 h-64 md:h-auto rounded-lg bg-gray-100 overflow-hidden"
                 >
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={imgSrc}
-                    alt={product.name}
-                    className="object-contain w-full h-full"
-                  />
+                  <img src={imgSrc} alt={product.name} className="object-contain w-full h-full" />
                 </Tilt>
 
                 <div className="flex-1 space-y-4">
@@ -211,13 +220,17 @@ function ProductModal({
                     <button
                       onClick={() => toggleFavorite(product)}
                       className={`flex-1 py-3 rounded-lg font-semibold border transition
-                        ${isFav ? 'bg-red-500 text-white border-red-500'
-                                 : 'border-gray-300 text-gray-700 hover:bg-gray-50'}`}
+                        ${isFav
+                          ? 'bg-red-500 text-white border-red-500'
+                          : 'border-gray-300 text-gray-700 hover:bg-gray-50'}`}
                     >
                       {isFav ? 'Quitar de favoritos' : 'Agregar a favoritos'}
                     </button>
 
-                    <button className="flex-1 bg-emerald-500 hover:bg-emerald-600 text-white font-semibold py-3 rounded-lg flex items-center justify-center gap-2">
+                    <button
+                      onClick={() => add(product, 1)}
+                      className="flex-1 bg-emerald-500 hover:bg-emerald-600 text-white font-semibold py-3 rounded-lg flex items-center justify-center gap-2"
+                    >
                       <ShoppingCart size={18} /> Agregar al carrito
                     </button>
                   </div>
@@ -232,37 +245,36 @@ function ProductModal({
 }
 
 /* ------------------------------------------------------------------
-   PAGE  (hooks al tope, returns después)
+   PAGE
    ------------------------------------------------------------------ */
-export default function SubGondolaPage() {
-  const { categoria } = useParams<{ categoria?: string }>() ?? {}
-  const router         = useRouter()
-  const searchParams   = useSearchParams()
+export default function SubGondolaPage () {
+  const { categoria }            = useParams<{ categoria?: string }>() ?? {}
+  const router                   = useRouter()
+  const searchParams             = useSearchParams()
 
-  /* ── hooks SIEMPRE al principio ── */
-  const catEntry  = DATA[categoria ?? ''] ?? null
+  /* hooks */
+  const catEntry  = DATA[categoria ?? '']
   const subKeys   = useMemo(
-    () => (catEntry ? Object.keys(catEntry.subcats) : []), 
-    [catEntry]
+    () => (catEntry ? Object.keys(catEntry.subcats) : []),
+    [catEntry],
   )
   const [modalProd, setModalProd] = useState<Product | null>(null)
 
-  /* ── returns tempranos (después de hooks) ── */
+  /* redirecciones-tempranas */
   if (!categoria) return null
-  if (!catEntry) {
+  if (!catEntry)
     return <main className="p-10 text-center text-xl">Categoría no encontrada</main>
-  }
 
-  /* resto */
+  /* navegación subcategorías */
   const defaultSub  = subKeys[0]
   const selectedSub = searchParams?.get('sub') || defaultSub
-  const setSub      = (sub: string) =>
-    router.replace(`?sub=${encodeURIComponent(sub)}`, { scroll: false })
+  const setSub      = (sub:string) =>
+    router.replace(`?sub=${encodeURIComponent(sub)}`, { scroll:false })
 
   return (
     <>
       <main className="max-w-7xl mx-auto px-4 py-10">
-        {/* migas de pan */}
+        {/* migas */}
         <nav className="text-sm text-gray-500 mb-8 space-x-1">
           <Link href="/gondolas" className="text-emerald-600 hover:underline">
             Góndolas
@@ -276,7 +288,6 @@ export default function SubGondolaPage() {
         <div className="flex gap-10">
           {/* lateral */}
           <aside className="w-48 shrink-0">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={`/gondolas/${categoria}.jpg`}
               alt={catEntry.title}
