@@ -127,15 +127,18 @@ export default function Navbar () {
                 </span>
               </button>
 
-              <button onClick={openCart} className="relative flex items-center gap-1 hover:opacity-80">
+              <button
+                id="cart-icon"
+                onClick={openCart}
+                className="relative flex items-center gap-1 hover:opacity-80"
+              >
                 <ShoppingCart className="w-5 h-5" />
                 <span>CARRITO</span>
-                    {totalQty > 0 && (
-                <span className="absolute -top-1 -right-2 bg-emerald-500 text-white text-[10px] font-bold
-                                rounded-full px-1.5">
-                  {totalQty}
-                </span>
-              )}
+                {totalQty > 0 && (
+                  <span className="absolute -top-1 -right-2 bg-emerald-500 text-white text-[10px] font-bold rounded-full px-1.5">
+                    {totalQty}
+                  </span>
+                )}
               </button>
 
               <button
